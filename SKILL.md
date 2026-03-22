@@ -1,6 +1,6 @@
 ---
 name: freshrss
-description: Query headlines and articles from a self-hosted FreshRSS instance. Use when the user asks for RSS news, latest headlines, feed updates, or wants to browse articles from their FreshRSS reader. Supports filtering by category, time range, and count.
+description: Query and interact with articles from a self-hosted FreshRSS instance. Use when the user asks for RSS news, latest headlines, feed updates, or wants to read, search, star, or mark articles as read from their FreshRSS reader. Supports filtering by keyword search, specific feed, category, time range, starred status, and unread.
 ---
 
 # FreshRSS
@@ -45,10 +45,28 @@ API password is set in FreshRSS → Settings → Profile → API Management.
 {baseDir}/scripts/freshrss.sh headlines --unread --count 20
 ```
 
+### Search by Keyword
+
+```bash
+{baseDir}/scripts/freshrss.sh headlines --search "apple" --count 50
+```
+
+### Get headlines from a specific feed
+
+```bash
+{baseDir}/scripts/freshrss.sh headlines --feed "123"
+```
+
+### Get starred (favorite) articles
+
+```bash
+{baseDir}/scripts/freshrss.sh headlines --starred
+```
+
 ### Combine filters
 
 ```bash
-{baseDir}/scripts/freshrss.sh headlines --category "News" --hours 4 --count 10 --unread
+{baseDir}/scripts/freshrss.sh headlines --category "News" --hours 4 --count 10 --search "tech" --unread
 ```
 
 ### List categories
@@ -63,18 +81,42 @@ API password is set in FreshRSS → Settings → Profile → API Management.
 {baseDir}/scripts/freshrss.sh feeds
 ```
 
+### Mark article as read
+
+Requires the article ID from the `headlines` command.
+```bash
+{baseDir}/scripts/freshrss.sh mark-read "ID_STRING"
+```
+
+### Star an article
+
+Requires the article ID from the `headlines` command.
+```bash
+{baseDir}/scripts/freshrss.sh star "ID_STRING"
+```
+
+### Unstar an article
+
+Requires the article ID from the `headlines` command.
+```bash
+{baseDir}/scripts/freshrss.sh unstar "ID_STRING"
+```
+
 ## Output
 
 Headlines are formatted as:
 ```
 [date] [source] Title
-  URL
+  ID: tag:google.com,2005:reader/item/0000000000000001
+  URL: https://example.com/article
   Categories: cat1, cat2
 ```
 
 ## Notes
 
 - Default count is 20 headlines if not specified
+- Keyword searching (`--search`) checks article titles and content. Useful to fetch a larger `--count` when searching.
 - Time filtering uses `--hours` for relative time (e.g., last 2 hours)
 - Category names are case-sensitive and must match your FreshRSS categories
 - Use `categories` command first to see available category names
+- Use `feeds` command to see available feeds and their IDs
